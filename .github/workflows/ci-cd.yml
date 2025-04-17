@@ -21,13 +21,13 @@ jobs:
           fi
           echo " index.html is present"
 
-      - name: Check for styles.css
+      - name: Check for style.css
         run: |
-          if [ ! -f styles.css ]; then
-            echo "styles.css not found!"
+          if [ ! -f style.css ]; then
+            echo "style.css not found!"
             exit 1
           fi
-          echo " styles.css is present"
+          echo " style.css is present"
 
       - name: Check for script.js
         run: |
