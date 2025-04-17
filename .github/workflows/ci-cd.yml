@@ -1,0 +1,53 @@
+name: CI/CD for Static Website
+
+on:
+  push:
+    branches: [ main ]  # Runs when code is pushed to main
+
+jobs:
+  build:
+    name: Check HTML, CSS, JS files
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Check for index.html
+        run: |
+          if [ ! -f index.html ]; then
+            echo "index.html not found!"
+            exit 1
+          fi
+          echo " index.html is present"
+
+      - name: Check for styles.css
+        run: |
+          if [ ! -f styles.css ]; then
+            echo "styles.css not found!"
+            exit 1
+          fi
+          echo " styles.css is present"
+
+      - name: Check for script.js
+        run: |
+          if [ ! -f script.js ]; then
+            echo "script.js not found!"
+            exit 1
+          fi
+          echo " script.js is present"
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: .  # Root folder contains index.html, styles.css, script.js
