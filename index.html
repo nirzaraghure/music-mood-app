@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Mood Music Recommender</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <video autoplay muted loop id="bgVideo">
+    <source src="bg_video.mp4" type="video/mp4">
+    Your browser does not support HTML5 video.
+  </video>
+  
+  <div class="container">
+    <h1>🎧 Music for Your Mood</h1>
+    <label for="mood">How are you feeling today?</label>
+    <select id="mood">
+      <option value="">--Select Mood--</option>
+      <option value="happy">Happy</option>
+      <option value="sad">Sad</option>
+      <option value="energetic">Energetic</option>
+      <option value="chill">Chill</option>
+    </select>
+    <button onclick="showSongs()">Get Songs</button>
+    <div id="results"></div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
