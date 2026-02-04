@@ -19,7 +19,7 @@ const musicData = {
 };
 
 function showSongs() {
-  const mood = document.getElementById("mood").value;
+  const mood = document.getElementById("mood").value.toLowerCase();
   const resultsDiv = document.getElementById("results");
   resultsDiv.innerHTML = "";
 
@@ -33,8 +33,8 @@ function showSongs() {
     const a = document.createElement("a");
     a.href = song.link;
     a.target = "_blank";
-    const p = document.createElement("p");
     a.textContent = song.name;
+    const p = document.createElement("p");
     p.appendChild(a);
     resultsDiv.appendChild(p);
   });
