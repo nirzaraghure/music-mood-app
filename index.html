@@ -1,123 +1,37 @@
-**Code Analysis Mode: 'auto'**
-
-I will suggest a full fix for the given code.
-
-**Security Vulnerability 1:** 
-The code is vulnerable to an XPath injection attack because it uses the `label` attribute to set the `for` attribute of the `select` element, which is not secure. 
-
-**Full Fix:** Use the `id` attribute instead of `label` attribute to set the `for` attribute of the `select` element.
-
-```html
-<!-- Before -->
-<label for="mood">How are you feeling today?</label>
-<select id="mood">
-  ...
-</select>
-
-<!-- After -->
-<h2>How are you feeling today?</h2>
-<select id="mood">
-  ...
-</select>
-```
-
-**Security Vulnerability 2:** 
-The code does not check if the selected option has a valid value before calling the `showSongs()` function. 
-
-**Full Fix:** Add a check to ensure that the selected option has a valid value before calling the `showSongs()` function.
-
 ```javascript
-function showSongs() {
-  const mood = document.getElementById('mood').value;
-  if (mood !== '') {
-    // Code to show songs
-  } else {
-    console.error('Invalid mood selected');
-  }
-}
-```
+// Get the mood select element
+const moodSelect = document.getElementById('mood');
 
-**Code Improvement 1:** 
-The code does not handle cases where the browser does not support HTML5 video.
+// Get the show songs button
+const showSongsButton = document.getElementById('show-songs-button');
 
-**Full Fix:** Add a fallback image or a message to handle cases where the browser does not support HTML5 video.
+// Get the results div
+const resultsDiv = document.getElementById('results');
 
-```html
-<!-- Before -->
-<video autoplay muted loop id="bgVideo">
-  ...
-</video>
+// Add event listener to show songs button
+showSongsButton.addEventListener('click', async () => {
+  // Get the selected mood
+  const selectedMood = moodSelect.value;
 
-<!-- After -->
-<video autoplay muted loop id="bgVideo">
-  <source src="bg_video.mp4" type="video/mp4">
-  <img src="fallback_image.jpg" alt="Fallback image">
-</video>
-```
+  // Send a GET request to the API with the selected mood
+  const response = await fetch(`api/moods/${selectedMood}`);
+  const data = await response.json();
 
-**Code Improvement 2:** 
-The code does not follow the principle of separation of concerns. The HTML and JavaScript code are mixed together.
+  // Create a list of songs
+  const songList = data.songs.map(song => `
+    <div class="song">
+      <h2>${song.title}</h2>
+      <p>${song.artist}</p>
+    </div>
+  `).join('');
 
-**Full Fix:** Move the JavaScript code to a separate file or a module, and use a framework or a library to handle the logic of the application.
+  // Display the song list in the results div
+  resultsDiv.innerHTML = songList;
+});
 
-```javascript
-// script.js
-function showSongs() {
-  const mood = document.getElementById('mood').value;
-  if (mood !== '') {
-    // Code to show songs
-  } else {
-    console.error('Invalid mood selected');
-  }
-}
-
-document.getElementById('mood').addEventListener('change', showSongs);
-```
-
-**Full Fix:**
-
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Mood Music Recommender</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <video autoplay muted loop id="bgVideo">
-    <source src="bg_video.mp4" type="video/mp4">
-    <img src="fallback_image.jpg" alt="Fallback image">
-  </video>
-  
-  <div class="container">
-    <h1>🎧 Music for Your Mood</h1>
-    <h2>How are you feeling today?</h2>
-    <select id="mood">
-      <option value="">--Select Mood--</option>
-      <option value="happy">Happy</option>
-      <option value="sad">Sad</option>
-      <option value="energetic">Energetic</option>
-      <option value="chill">Chill</option>
-    </select>
-    <button id="show-songs-button">Get Songs</button>
-    <div id="results"></div>
-  </div>
-  <script src="script.js"></script>
-</body>
-</html>
-```
-
-```javascript
-// script.js
-document.getElementById('show-songs-button').addEventListener('click', showSongs);
-
-function showSongs() {
-  const mood = document.getElementById('mood').value;
-  if (mood !== '') {
-    // Code to show songs
-  } else {
-    console.error('Invalid mood selected');
-  }
-}
+// Add event listener to mood select
+moodSelect.addEventListener('change', () => {
+  // Clear the results div
+  resultsDiv.innerHTML = '';
+});
 ```
