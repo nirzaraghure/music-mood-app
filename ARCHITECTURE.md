@@ -11,6 +11,8 @@ graph TD
   A --> H[index.html]
   A --> I[script.js]
   A --> J[style.css]
+
+  ,stroke:#333,stroke-width:2px
   ,stroke:#333,stroke-width:2px
   ,stroke:#333,stroke-width:2px
   ,stroke:#333,stroke-width:2px
