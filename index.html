@@ -3,32 +3,31 @@ const moodSelect = document.getElementById('mood');
 const showSongsButton = document.getElementById('show-songs-button');
 const resultsDiv = document.getElementById('results');
 
+const songTemplate = document.createElement('template');
+songTemplate.innerHTML = `
+  <div class="song">
+    <h2>{{title}}</h2>
+    <p>{{artist}}</p>
+  </div>
+`;
+
 showSongsButton.addEventListener('click', async () => {
   const selectedMood = moodSelect.value;
 
   try {
     const response = await fetch(`api/moods/${selectedMood}`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
     const data = await response.json();
 
-    const songListTemplate = document.createElement('template');
-    songListTemplate.innerHTML = `
-      {{#songs}}
-        <div class="song">
-          <h2>{{title}}</h2>
-          <p>{{artist}}</p>
-        </div>
-      {{/songs}}
-    `;
-    const songList = songListTemplate.content.cloneNode(true).children[0];
-    data.songs.forEach(song => {
-      const songElement = songListTemplate.content.cloneNode(true).children[0];
-      songElement.querySelector('h2').textContent = song.title;
-      songElement.querySelector('p').textContent = song.artist;
-      songList.appendChild(songElement);
-    });
-
     resultsDiv.innerHTML = '';
-    resultsDiv.appendChild(songList);
+    data.songs.forEach(song => {
+      const clone = songTemplate.content.cloneNode(true);
+      clone.querySelector('h2').textContent = song.title;
+      clone.querySelector('p').textContent = song.artist;
+      resultsDiv.appendChild(clone);
+    });
   } catch (error) {
     console.error('Error:', error);
   }
@@ -36,5 +35,6 @@ showSongsButton.addEventListener('click', async () => {
 
 moodSelect.addEventListener('change', () => {
   resultsDiv.innerHTML = '';
+  showSongsButton.click(); // Simulate click event to fetch new data
 });
 ```
