@@ -1,11 +1,7 @@
 ```javascript
 // Get the mood select element
 const moodSelect = document.getElementById('mood');
-
-// Get the show songs button
 const showSongsButton = document.getElementById('show-songs-button');
-
-// Get the results div
 const resultsDiv = document.getElementById('results');
 
 // Add event listener to show songs button
@@ -13,20 +9,22 @@ showSongsButton.addEventListener('click', async () => {
   // Get the selected mood
   const selectedMood = moodSelect.value;
 
-  // Send a GET request to the API with the selected mood
-  const response = await fetch(`api/moods/${selectedMood}`);
-  const data = await response.json();
+  try {
+    // Send a GET request to the API with the selected mood
+    const response = await fetch(`api/moods/${selectedMood}`);
+    const data = await response.json();
 
-  // Create a list of songs
-  const songList = data.songs.map(song => `
-    <div class="song">
-      <h2>${song.title}</h2>
-      <p>${song.artist}</p>
-    </div>
-  `).join('');
-
-  // Display the song list in the results div
-  resultsDiv.innerHTML = songList;
+    // Display the song list in the results div
+    const songList = data.songs.map(song => `
+      <div class="song">
+        <h2>${song.title}</h2>
+        <p>${song.artist}</p>
+      </div>
+    `).join('');
+    resultsDiv.innerHTML = songList;
+  } catch (error) {
+    console.error('Error:', error);
+  }
 });
 
 // Add event listener to mood select
