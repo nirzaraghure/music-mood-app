@@ -11,6 +11,17 @@ songTemplate.innerHTML = `
   </div>
 `;
 
+// Function to render songs
+function renderSongs(songs) {
+  resultsDiv.innerHTML = '';
+  songs.forEach(song => {
+    const clone = songTemplate.content.cloneNode(true);
+    clone.querySelector('h2').textContent = song.title;
+    clone.querySelector('p').textContent = song.artist;
+    resultsDiv.appendChild(clone);
+  });
+}
+
 showSongsButton.addEventListener('click', async () => {
   const selectedMood = moodSelect.value;
 
@@ -21,20 +32,15 @@ showSongsButton.addEventListener('click', async () => {
     }
     const data = await response.json();
 
-    resultsDiv.innerHTML = '';
-    data.songs.forEach(song => {
-      const clone = songTemplate.content.cloneNode(true);
-      clone.querySelector('h2').textContent = song.title;
-      clone.querySelector('p').textContent = song.artist;
-      resultsDiv.appendChild(clone);
-    });
+    renderSongs(data.songs);
   } catch (error) {
     console.error('Error:', error);
+    resultsDiv.innerHTML = ''; // Clear results in case of error
   }
 });
 
-moodSelect.addEventListener('change', () => {
+moodSelect.addEventListener('change', async () => {
   resultsDiv.innerHTML = '';
-  showSongsButton.click(); // Simulate click event to fetch new data
+  await showSongsButton.click(); // Simulate click event to fetch new data
 });
 ```
