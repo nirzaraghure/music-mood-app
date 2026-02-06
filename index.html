@@ -3,22 +3,26 @@ const moodSelect = document.getElementById('mood');
 const showSongsButton = document.getElementById('show-songs-button');
 const resultsDiv = document.getElementById('results');
 
+const songListTemplate = document.createElement('template');
+songListTemplate.innerHTML = `
+  {{#songs}}
+    <div class="song">
+      <h2>{{title}}</h2>
+      <p>{{artist}}</p>
+    </div>
+  {{/songs}}
+`;
+
 showSongsButton.addEventListener('click', async () => {
   const selectedMood = moodSelect.value;
 
   try {
     const response = await fetch(`api/moods/${selectedMood}`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
     const data = await response.json();
 
-    const songListTemplate = document.createElement('template');
-    songListTemplate.innerHTML = `
-      {{#songs}}
-        <div class="song">
-          <h2>{{title}}</h2>
-          <p>{{artist}}</p>
-        </div>
-      {{/songs}}
-    `;
     const songList = songListTemplate.content.cloneNode(true).children[0];
     data.songs.forEach(song => {
       const songElement = songListTemplate.content.cloneNode(true).children[0];
@@ -31,6 +35,7 @@ showSongsButton.addEventListener('click', async () => {
     resultsDiv.appendChild(songList);
   } catch (error) {
     console.error('Error:', error);
+    resultsDiv.innerHTML = '<p>Error: Failed to load songs.</p>';
   }
 });
 
