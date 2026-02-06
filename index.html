@@ -1,37 +1,30 @@
 ```javascript
-// Get the mood select element
 const moodSelect = document.getElementById('mood');
-
-// Get the show songs button
 const showSongsButton = document.getElementById('show-songs-button');
-
-// Get the results div
 const resultsDiv = document.getElementById('results');
 
-// Add event listener to show songs button
 showSongsButton.addEventListener('click', async () => {
-  // Get the selected mood
-  const selectedMood = moodSelect.value;
-
-  // Send a GET request to the API with the selected mood
-  const response = await fetch(`api/moods/${selectedMood}`);
-  const data = await response.json();
-
-  // Create a list of songs
-  const songList = data.songs.map(song => `
-    <div class="song">
-      <h2>${song.title}</h2>
-      <p>${song.artist}</p>
-    </div>
-  `).join('');
-
-  // Display the song list in the results div
-  resultsDiv.innerHTML = songList;
+  try {
+    const selectedMood = moodSelect.value;
+    const response = await fetch(`api/moods/${selectedMood}`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    const songList = data.songs.map(song => `
+      <div class="song">
+        <h2>${song.title}</h2>
+        <p>${song.artist}</p>
+      </div>
+    `).join('');
+    resultsDiv.innerHTML = songList;
+  } catch (error) {
+    console.error('Error fetching songs:', error);
+    resultsDiv.innerHTML = '<p>Error loading songs.</p>';
+  }
 });
 
-// Add event listener to mood select
 moodSelect.addEventListener('change', () => {
-  // Clear the results div
   resultsDiv.innerHTML = '';
 });
 ```
