@@ -4,27 +4,31 @@ const moodSelect = document.getElementById('mood');
 const showSongsButton = document.getElementById('show-songs-button');
 const resultsDiv = document.getElementById('results');
 
-// Add event listener to show songs button
-showSongsButton.addEventListener('click', async () => {
-  // Get the selected mood
-  const selectedMood = moodSelect.value;
-
+// Function to fetch and display songs for the selected mood
+async function fetchSongs(mood) {
   try {
-    // Send a GET request to the API with the selected mood
-    const response = await fetch(`api/moods/${selectedMood}`);
+    const response = await fetch(`api/moods/${mood}`);
     const data = await response.json();
-
-    // Display the song list in the results div
-    const songList = data.songs.map(song => `
+    return data.songs.map(song => `
       <div class="song">
         <h2>${song.title}</h2>
         <p>${song.artist}</p>
       </div>
     `).join('');
-    resultsDiv.innerHTML = songList;
   } catch (error) {
     console.error('Error:', error);
+    return '';
   }
+}
+
+// Add event listener to show songs button
+showSongsButton.addEventListener('click', async () => {
+  // Get the selected mood
+  const selectedMood = moodSelect.value;
+
+  // Fetch and display songs for the selected mood
+  const songList = await fetchSongs(selectedMood);
+  resultsDiv.innerHTML = songList;
 });
 
 // Add event listener to mood select
