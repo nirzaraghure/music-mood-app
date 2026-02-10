@@ -3,13 +3,29 @@ const moodSelect = document.getElementById('mood');
 const showSongsButton = document.getElementById('show-songs-button');
 const resultsDiv = document.getElementById('results');
 
+// Create a song template with a function to render song data
 const songTemplate = document.createElement('template');
 songTemplate.innerHTML = `
   <div class="song">
-    <h2>{{title}}</h2>
-    <p>{{artist}}</p>
+    <h2 data-title></h2>
+    <p data-artist></p>
   </div>
 `;
+
+class SongRenderer {
+  constructor(template) {
+    this.template = template;
+  }
+
+  renderSong(data) {
+    const clone = this.template.content.cloneNode(true);
+    clone.querySelector('[data-title]').textContent = data.title;
+    clone.querySelector('[data-artist]').textContent = data.artist;
+    return clone;
+  }
+}
+
+const renderer = new SongRenderer(songTemplate);
 
 // Function to render songs
 function renderSongs(data) {
@@ -17,9 +33,7 @@ function renderSongs(data) {
 
   resultsDiv.innerHTML = '';
   data.songs.forEach(song => {
-    const clone = songTemplate.content.cloneNode(true);
-    clone.querySelector('h2').textContent = song.title;
-    clone.querySelector('p').textContent = song.artist;
+    const clone = renderer.renderSong(song);
     resultsDiv.appendChild(clone);
   });
 }
