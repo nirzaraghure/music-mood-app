@@ -1,8 +1,10 @@
 ```javascript
+// Get DOM elements
 const moodSelect = document.getElementById('mood');
 const showSongsButton = document.getElementById('show-songs-button');
 const resultsDiv = document.getElementById('results');
 
+// Create song template
 const songTemplate = document.createElement('template');
 songTemplate.innerHTML = `
   <div class="song">
@@ -12,16 +14,18 @@ songTemplate.innerHTML = `
 `;
 
 // Function to render songs
-function renderSongs(data) {
+function renderSongs(data, container = resultsDiv) {
   if (!data || !data.songs) return;
 
-  resultsDiv.innerHTML = '';
+  const fragment = document.createDocumentFragment();
   data.songs.forEach(song => {
     const clone = songTemplate.content.cloneNode(true);
     clone.querySelector('h2').textContent = song.title;
     clone.querySelector('p').textContent = song.artist;
-    resultsDiv.appendChild(clone);
+    fragment.appendChild(clone);
   });
+  container.innerHTML = '';
+  container.appendChild(fragment);
 }
 
 // Function to fetch songs
@@ -31,24 +35,28 @@ async function fetchSongs(mood) {
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    const data = await response.json();
-    return data;
+    return await response.json();
   } catch (error) {
     console.error('Error:', error);
     return null;
   }
 }
 
-// Event listeners
-showSongsButton.addEventListener('click', async () => {
-  const selectedMood = moodSelect.value;
-  const data = await fetchSongs(selectedMood);
-  renderSongs(data);
-});
+// Function to handle events
+async function handleEvents() {
+  showSongsButton.addEventListener('click', async () => {
+    const selectedMood = moodSelect.value;
+    const data = await fetchSongs(selectedMood);
+    renderSongs(data);
+  });
 
-moodSelect.addEventListener('change', async () => {
-  const selectedMood = moodSelect.value;
-  const data = await fetchSongs(selectedMood);
-  renderSongs(data);
-});
+  moodSelect.addEventListener('input', async () => {
+    const selectedMood = moodSelect.value;
+    const data = await fetchSongs(selectedMood);
+    renderSongs(data);
+  });
+}
+
+// Initialize and handle events
+handleEvents();
 ```
