@@ -15,13 +15,15 @@ songTemplate.innerHTML = `
 function renderSongs(data) {
   if (!data || !data.songs) return;
 
-  resultsDiv.innerHTML = '';
-  data.songs.forEach(song => {
+  const fragment = document.createDocumentFragment();
+  data.songs.forEach((song) => {
     const clone = songTemplate.content.cloneNode(true);
     clone.querySelector('h2').textContent = song.title;
     clone.querySelector('p').textContent = song.artist;
-    resultsDiv.appendChild(clone);
+    fragment.appendChild(clone);
   });
+  resultsDiv.innerHTML = '';
+  resultsDiv.appendChild(fragment);
 }
 
 // Function to fetch songs
@@ -31,24 +33,19 @@ async function fetchSongs(mood) {
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    const data = await response.json();
-    return data;
+    return response.json();
   } catch (error) {
     console.error('Error:', error);
-    return null;
+    return Promise.resolve(null);
   }
 }
 
-// Event listeners
-showSongsButton.addEventListener('click', async () => {
-  const selectedMood = moodSelect.value;
-  const data = await fetchSongs(selectedMood);
-  renderSongs(data);
-});
+// Function to handle user interaction
+function handleUserInteraction(mood) {
+  fetchSongs(mood).then(renderSongs);
+}
 
-moodSelect.addEventListener('change', async () => {
-  const selectedMood = moodSelect.value;
-  const data = await fetchSongs(selectedMood);
-  renderSongs(data);
-});
+// Event listeners
+showSongsButton.addEventListener('click', () => handleUserInteraction(moodSelect.value));
+moodSelect.addEventListener('change', () => handleUserInteraction(moodSelect.value));
 ```
