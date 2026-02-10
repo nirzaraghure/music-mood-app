@@ -1,8 +1,10 @@
 ```javascript
+// Cache DOM elements
 const moodSelect = document.getElementById('mood');
 const showSongsButton = document.getElementById('show-songs-button');
 const resultsDiv = document.getElementById('results');
 
+// Cache song template
 const songTemplate = document.createElement('template');
 songTemplate.innerHTML = `
   <div class="song">
@@ -11,12 +13,15 @@ songTemplate.innerHTML = `
   </div>
 `;
 
-// Function to render songs
+/**
+ * Renders songs in the results div
+ * @param {Object} data - Data containing songs
+ */
 function renderSongs(data) {
   if (!data || !data.songs) return;
 
   resultsDiv.innerHTML = '';
-  data.songs.forEach(song => {
+  data.songs.forEach((song) => {
     const clone = songTemplate.content.cloneNode(true);
     clone.querySelector('h2').textContent = song.title;
     clone.querySelector('p').textContent = song.artist;
@@ -24,20 +29,25 @@ function renderSongs(data) {
   });
 }
 
-// Function to fetch songs
-async function fetchSongs(mood) {
+/**
+ * Fetches songs for the given mood
+ * @param {string} mood - Selected mood
+ * @returns {Promise<Object>} - Data containing songs
+ */
+const fetchSongs = async (mood) => {
   try {
     const response = await fetch(`api/moods/${mood}`);
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const error = new Error(`HTTP error! status: ${response.status}`);
+      console.error('Error:', error);
+      return null;
     }
-    const data = await response.json();
-    return data;
+    return response.json();
   } catch (error) {
     console.error('Error:', error);
     return null;
   }
-}
+};
 
 // Event listeners
 showSongsButton.addEventListener('click', async () => {
