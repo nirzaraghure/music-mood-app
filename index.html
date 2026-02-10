@@ -1,8 +1,10 @@
 ```javascript
+// Cache DOM elements
 const moodSelect = document.getElementById('mood');
 const showSongsButton = document.getElementById('show-songs-button');
 const resultsDiv = document.getElementById('results');
 
+// Create song template
 const songTemplate = document.createElement('template');
 songTemplate.innerHTML = `
   <div class="song">
@@ -11,12 +13,15 @@ songTemplate.innerHTML = `
   </div>
 `;
 
-// Function to render songs
+/**
+ * Render songs in the results div
+ * @param {object} data Songs data to render
+ */
 function renderSongs(data) {
   if (!data || !data.songs) return;
 
   resultsDiv.innerHTML = '';
-  data.songs.forEach(song => {
+  data.songs.forEach((song, index) => {
     const clone = songTemplate.content.cloneNode(true);
     clone.querySelector('h2').textContent = song.title;
     clone.querySelector('p').textContent = song.artist;
@@ -24,31 +29,34 @@ function renderSongs(data) {
   });
 }
 
-// Function to fetch songs
+/**
+ * Fetch songs from the API based on the mood
+ * @param {string} mood Selected mood
+ * @returns {Promise<object|null>} Fetched data or null on error
+ */
 async function fetchSongs(mood) {
   try {
     const response = await fetch(`api/moods/${mood}`);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    const data = await response.json();
-    return data;
+    return await response.json();
   } catch (error) {
     console.error('Error:', error);
     return null;
   }
 }
 
-// Event listeners
-showSongsButton.addEventListener('click', async () => {
+/**
+ * Handle mood change by fetching and rendering songs
+ */
+async function handleMoodChange() {
   const selectedMood = moodSelect.value;
   const data = await fetchSongs(selectedMood);
   renderSongs(data);
-});
+}
 
-moodSelect.addEventListener('change', async () => {
-  const selectedMood = moodSelect.value;
-  const data = await fetchSongs(selectedMood);
-  renderSongs(data);
-});
+// Add event listeners
+showSongsButton.addEventListener('click', handleMoodChange);
+moodSelect.addEventListener('change', handleMoodChange);
 ```
