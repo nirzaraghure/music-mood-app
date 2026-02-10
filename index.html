@@ -39,16 +39,14 @@ async function fetchSongs(mood) {
   }
 }
 
-// Event listeners
-showSongsButton.addEventListener('click', async () => {
+// Function to handle button click and select change
+async function handleMoodChange() {
   const selectedMood = moodSelect.value;
   const data = await fetchSongs(selectedMood);
   renderSongs(data);
-});
+}
 
-moodSelect.addEventListener('change', async () => {
-  const selectedMood = moodSelect.value;
-  const data = await fetchSongs(selectedMood);
-  renderSongs(data);
-});
+// Event listeners
+showSongsButton.addEventListener('click', handleMoodChange);
+moodSelect.addEventListener('change', handleMoodChange);
 ```
