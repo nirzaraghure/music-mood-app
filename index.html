@@ -11,44 +11,44 @@ songTemplate.innerHTML = `
   </div>
 `;
 
-// Function to render songs
 function renderSongs(data) {
   if (!data || !data.songs) return;
 
-  resultsDiv.innerHTML = '';
+  const fragment = document.createDocumentFragment();
   data.songs.forEach(song => {
     const clone = songTemplate.content.cloneNode(true);
     clone.querySelector('h2').textContent = song.title;
     clone.querySelector('p').textContent = song.artist;
-    resultsDiv.appendChild(clone);
+    fragment.appendChild(clone);
   });
+  resultsDiv.innerHTML = '';
+  resultsDiv.appendChild(fragment);
 }
 
-// Function to fetch songs
 async function fetchSongs(mood) {
   try {
     const response = await fetch(`api/moods/${mood}`);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    const data = await response.json();
-    return data;
+    return response.json();
   } catch (error) {
     console.error('Error:', error);
     return null;
   }
 }
 
-// Event listeners
-showSongsButton.addEventListener('click', async () => {
+async function handleButtonClick() {
   const selectedMood = moodSelect.value;
   const data = await fetchSongs(selectedMood);
   renderSongs(data);
-});
+}
 
-moodSelect.addEventListener('change', async () => {
-  const selectedMood = moodSelect.value;
-  const data = await fetchSongs(selectedMood);
-  renderSongs(data);
-});
+showSongsButton.addEventListener('click', handleButtonClick);
+moodSelect.addEventListener('change', handleButtonClick);
+
+// Optional: Debounce event listener for 'change' event to improve performance
+// moodSelect.addEventListener('change', () => {
+//   setTimeout(handleButtonClick, 500); // adjust the delay as needed
+// });
 ```
