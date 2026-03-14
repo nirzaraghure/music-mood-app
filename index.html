@@ -46,8 +46,8 @@ showSongsButton.addEventListener('click', async () => {
   renderSongs(data);
 });
 
-moodSelect.addEventListener('change', async () => {
-  const selectedMood = moodSelect.value;
+moodSelect.addEventListener('change', async (event) => {
+  const selectedMood = event.target.value;
   const data = await fetchSongs(selectedMood);
   renderSongs(data);
 });
