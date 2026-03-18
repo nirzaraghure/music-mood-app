@@ -1,8 +1,10 @@
 ```javascript
+// Get elements from the DOM
 const moodSelect = document.getElementById('mood');
 const showSongsButton = document.getElementById('show-songs-button');
 const resultsDiv = document.getElementById('results');
 
+// Create a template element for song rendering
 const songTemplate = document.createElement('template');
 songTemplate.innerHTML = `
   <div class="song">
@@ -15,7 +17,10 @@ songTemplate.innerHTML = `
 function renderSongs(data) {
   if (!data || !data.songs) return;
 
+  // Clear existing content to avoid duplicates
   resultsDiv.innerHTML = '';
+
+  // Iterate through songs and clone template for each
   data.songs.forEach(song => {
     const clone = songTemplate.content.cloneNode(true);
     clone.querySelector('h2').textContent = song.title;
@@ -31,8 +36,7 @@ async function fetchSongs(mood) {
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    const data = await response.json();
-    return data;
+    return await response.json();
   } catch (error) {
     console.error('Error:', error);
     return null;
@@ -41,12 +45,16 @@ async function fetchSongs(mood) {
 
 // Function to handle mood change
 async function handleMoodChange() {
-  const selectedMood = moodSelect.value;
-  const data = await fetchSongs(selectedMood);
-  renderSongs(data);
+  try {
+    const selectedMood = moodSelect.value;
+    const data = await fetchSongs(selectedMood);
+    renderSongs(data);
+  } catch (error) {
+    console.error('Error:', error);
+  }
 }
 
-// Event listeners
+// Add event listeners for button click and mood change
 showSongsButton.addEventListener('click', handleMoodChange);
 moodSelect.addEventListener('change', handleMoodChange);
 ```
