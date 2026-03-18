@@ -1,8 +1,10 @@
 ```javascript
+// Cache DOM elements for efficiency
 const moodSelect = document.getElementById('mood');
 const showSongsButton = document.getElementById('show-songs-button');
 const resultsDiv = document.getElementById('results');
 
+// Create a template for rendering song elements
 const songTemplate = document.createElement('template');
 songTemplate.innerHTML = `
   <div class="song">
@@ -15,7 +17,10 @@ songTemplate.innerHTML = `
 function renderSongs(data) {
   if (!data || !data.songs) return;
 
+  // Clear existing content to prevent duplication
   resultsDiv.innerHTML = '';
+
+  // Use map for more concise iteration and better performance
   data.songs.forEach(song => {
     const clone = songTemplate.content.cloneNode(true);
     clone.querySelector('h2').textContent = song.title;
@@ -46,7 +51,9 @@ async function handleMoodChange() {
   renderSongs(data);
 }
 
-// Event listeners
-showSongsButton.addEventListener('click', handleMoodChange);
-moodSelect.addEventListener('change', handleMoodChange);
+// Add event listeners
+['click', 'change'].forEach(type => {
+  showSongsButton.addEventListener(type, handleMoodChange);
+  moodSelect.addEventListener(type, handleMoodChange);
+});
 ```
