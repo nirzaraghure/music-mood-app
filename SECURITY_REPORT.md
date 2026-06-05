@@ -1,9 +1,9 @@
 # 🛡️ AppGenius Security Report
 
 **Repository:** `nirzaraghure/music-mood-app`
-**Scan Date:** 6/3/2026, 1:12:13 PM
+**Scan Date:** 6/5/2026, 1:48:10 PM
 **Files Scanned:** 1
-**Issues Found:** 5
+**Issues Found:** 7
 
 ## 📊 Summary
 
@@ -11,41 +11,41 @@
 |----------|-------|
 | 🔴 Critical | 0 |
 | 🟠 High | 2 |
-| 🟡 Medium | 2 |
+| 🟡 Medium | 4 |
 | 🔵 Low | 1 |
 
 ## 🔍 Detailed Findings
 
-### 🟠 1. Hardcoded YouTube links can be exploited by malicious actors
+### 🟠 1. Missing input validation on YouTube link
 
 **File:** `script.js`
-**Type:** Vulnerability
+**Type:** Security
 **Severity:** HIGH
 
 **Description:**
-Hardcoded links can be used to phish users or distribute malware.
+Potential XSS vulnerability due to missing validation on YouTube link.
 
 **Suggested Fix:**
-Use a secure API or service to fetch music links.
+Validate the link to ensure it meets the expected format.
 
 **Code Example:**
 ```
-const musicData = { ... };
+a.href = song.link;
 ```
 
 ---
 
-### 🟡 2. Missing input validation for mood selection
+### 🟡 2. Using internal JavaScript method (toLowerCase()) without checking for null or undefined
 
 **File:** `script.js`
-**Type:** Vulnerability
+**Type:** Code Quality
 **Severity:** MEDIUM
 
 **Description:**
-An attacker could potentially inject malicious code by manipulating the mood input.
+The method will throw an error if the value is null or undefined.
 
 **Suggested Fix:**
-Implement input validation to ensure only valid moods are selected.
+Check for null or undefined before using the method.
 
 **Code Example:**
 ```
@@ -54,59 +54,97 @@ const mood = document.getElementById("mood").value.toLowerCase();
 
 ---
 
-### 🟠 3. DOM XSS vulnerability due to direct innerHTML assignment
+### 🟡 3. Missing null check for 'resultsDiv' element
 
 **File:** `script.js`
-**Type:** Vulnerability
-**Severity:** HIGH
-
-**Description:**
-An attacker could inject malicious JavaScript code by manipulating the mood input.
-
-**Suggested Fix:**
-Use a safer method to update the DOM, such as document.createTextNode().
-
-**Code Example:**
-```
-resultsDiv.innerHTML = "<p>Please select a mood.</p>";
-```
-
----
-
-### 🟡 4. Missing error handling for API requests or service calls
-
-**File:** `script.js`
-**Type:** Vulnerability
+**Type:** Code Quality
 **Severity:** MEDIUM
 
 **Description:**
-If an API request or service call fails, the application may become unresponsive or produce unexpected behavior.
+The code will throw an error if the element is not found.
 
 **Suggested Fix:**
-Implement try-catch blocks or error handling mechanisms to handle potential issues.
+Check if the element exists before using it.
 
 **Code Example:**
 ```
-const songs = musicData[mood];
+const resultsDiv = document.getElementById("results");
 ```
 
 ---
 
-### 🔵 5. Potential memory leak due to global variable usage
+### 🟠 4. Potential DOM-based XSS vulnerability due to innerHTML
 
 **File:** `script.js`
-**Type:** Code Quality Issue
-**Severity:** LOW
+**Type:** Security
+**Severity:** HIGH
 
 **Description:**
-Global variables can cause memory leaks and make the code harder to debug.
+The innerHTML method can be used to inject malicious scripts.
 
 **Suggested Fix:**
-Declare variables with the 'let' or 'const' keyword to avoid global scope.
+Use a safer method to update the HTML, such as DocumentFragment.
 
 **Code Example:**
 ```
-const musicData = { ... };
+resultsDiv.innerHTML = ";
+```
+
+---
+
+### 🟡 5. Missing check for empty 'musicData' object
+
+**File:** `script.js`
+**Type:** Code Quality
+**Severity:** MEDIUM
+
+**Description:**
+The code will throw an error if the object is empty.
+
+**Suggested Fix:**
+Check if the object is empty before accessing its properties.
+
+**Code Example:**
+```
+if (!musicData[mood]) {
+```
+
+---
+
+### 🟡 6. Using 'forEach' on an array without checking for null or undefined
+
+**File:** `script.js`
+**Type:** Code Quality
+**Severity:** MEDIUM
+
+**Description:**
+The method will throw an error if the array is null or undefined.
+
+**Suggested Fix:**
+Check for null or undefined before using the method.
+
+**Code Example:**
+```
+songs.forEach(song => {
+```
+
+---
+
+### 🔵 7. Potential memory leak due to missing cleanup
+
+**File:** `script.js`
+**Type:** Code Quality
+**Severity:** LOW
+
+**Description:**
+The code does not clean up the created elements.
+
+**Suggested Fix:**
+Clean up the created elements to prevent memory leaks.
+
+**Code Example:**
+```
+const p = document.createElement("p");
 ```
 
 ---
